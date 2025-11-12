@@ -28,9 +28,12 @@ WORKDIR /app
 # Copiar solo el JAR construido desde el stage anterior
 COPY --from=builder /app/build/libs/*.jar app.jar
 
+# Copiar applicationRender.yml para Render
+COPY --from=builder /app/src/main/resources/applicationRender.yml /app/application.yml
+
 # Puerto de la aplicación (Render asigna dinámicamente)
 EXPOSE 8080
 
-# Comando para ejecutar la aplicación
+# Comando para ejecutar la aplicación con el archivo de configuración de Render
 # Render proporciona PORT como variable de entorno
-CMD ["sh", "-c", "java -jar app.jar --server.port=${PORT:-8080}"]
+CMD ["sh", "-c", "java -jar app.jar --spring.config.location=file:/app/application.yml --server.port=${PORT:-8080}"]

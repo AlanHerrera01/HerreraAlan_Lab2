@@ -3,30 +3,25 @@ app:
   name: springlab-Alan-herrera
 
 server:
-  port: ${PORT:8080}
+  port: 8080
 
 spring:
-  #Configuracion del datasource
+  #Configuracion del datasource (MySQL local)
   datasource:
-    url: ${DATABASE_URL:jdbc:h2:mem:testdb}
-    username: ${DATABASE_USER:sa}
-    password: ${DATABASE_PASSWORD:}
-    driver-class-name: ${DATABASE_DRIVER:org.h2.Driver}
-
-  #Configuracion de H2 Console (solo para desarrollo/demo)
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
+    url: jdbc:mysql://localhost:3306/spring_lab?useSSL=false&serverTimezone=UTC
+    username: root
+    password:
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   #Configuracion de JPA/Hibernate
   jpa:
     hibernate:
-      ddl-auto: ${DDL_AUTO:create-drop}
-    show-sql: ${SHOW_SQL:false}
+      ddl-auto: update
+    show-sql: true
     properties:
       hibernate:
         format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
 
   #Configuracion de Jackson
   jackson:
