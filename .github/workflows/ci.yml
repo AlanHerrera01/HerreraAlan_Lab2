@@ -39,15 +39,16 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
-      - name: Trigger Render deploy
+      - name: Trigger Render deploy (via webhook)
         id: deploy
-        uses: fjogeleit/[email protected]
-        with:
-          webhook: ${{ secrets.RENDER_DEPLOY_HOOK }}
-          data: '{"commit": "${{ github.sha }}", "version": "${{ env.APP_VERSION }}"}'
+        run: |
+          response=$(curl -s -o /dev/null -w "%{http_code}" -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}" \
+            -H "Content-Type: application/json" \
+            -d '{"commit":"${{ github.sha }}","version":"${{ env.APP_VERSION }}"}')
+          echo "response=$response" >> $GITHUB_OUTPUT
           
       - name: Verify deployment
-        if: steps.deploy.outputs.responseCode != '200'
+        if: steps.deploy.outputs.response != '200'
         run: |
           echo "Deployment failed, triggering rollback"
           curl -X POST \
