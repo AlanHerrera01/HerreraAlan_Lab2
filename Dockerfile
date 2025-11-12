@@ -1,26 +1,36 @@
-# Usa la imagen de Eclipse Temurin (reemplazo oficial de OpenJDK)
-FROM eclipse-temurin:17-jdk-alpine
+# Multi-stage build para optimizar el tamaño y manejar problemas de red
+# Stage 1: Build
+FROM eclipse-temurin:17-jdk-alpine AS builder
 
-# Directorio de trabajo
 WORKDIR /app
 
-# Copia los archivos de configuración de Gradle
+# Copiar archivos de Gradle
 COPY build.gradle settings.gradle gradlew ./
 COPY gradle ./gradle
 
-# Descarga las dependencias
-RUN chmod +x ./gradlew
-RUN ./gradlew dependencies
+# Dar permisos y descargar dependencias con reintentos
+RUN chmod +x ./gradlew && \
+    ./gradlew dependencies --no-daemon --refresh-dependencies || \
+    ./gradlew dependencies --no-daemon --refresh-dependencies || \
+    ./gradlew dependencies --no-daemon --refresh-dependencies
 
-# Copia el código fuente
+# Copiar código fuente
 COPY src ./src
 
-# Construye la aplicación
-RUN ./gradlew clean build -x test
+# Construir aplicación
+RUN ./gradlew clean build -x test --no-daemon
+
+# Stage 2: Runtime
+FROM eclipse-temurin:17-jre-alpine
+
+WORKDIR /app
+
+# Copiar solo el JAR construido desde el stage anterior
+COPY --from=builder /app/build/libs/*.jar app.jar
 
 # Puerto de la aplicación (Render asigna dinámicamente)
 EXPOSE 8080
 
 # Comando para ejecutar la aplicación
 # Render proporciona PORT como variable de entorno
-CMD ["sh", "-c", "java -jar build/libs/spring-lab-0.0.1-SNAPSHOT.jar --server.port=${PORT:-8080}"]
+CMD ["sh", "-c", "java -jar app.jar --server.port=${PORT:-8080}"]
