@@ -8,20 +8,25 @@ server:
 spring:
   #Configuracion del datasource
   datasource:
-    url: ${DATABASE_URL:jdbc:mysql://localhost:3306/spring_lab?useSSL=false&serverTimezone=UTC}
-    username: ${DATABASE_USER:root}
+    url: ${DATABASE_URL:jdbc:h2:mem:testdb}
+    username: ${DATABASE_USER:sa}
     password: ${DATABASE_PASSWORD:}
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: ${DATABASE_DRIVER:org.h2.Driver}
+
+  #Configuracion de H2 Console (solo para desarrollo/demo)
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
 
   #Configuracion de JPA/Hibernate
   jpa:
     hibernate:
-      ddl-auto: ${DDL_AUTO:update}
+      ddl-auto: ${DDL_AUTO:create-drop}
     show-sql: ${SHOW_SQL:false}
     properties:
       hibernate:
         format_sql: true
-        dialect: org.hibernate.dialect.MySQLDialect
 
   #Configuracion de Jackson
   jackson:
