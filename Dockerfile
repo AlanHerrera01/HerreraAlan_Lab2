@@ -1,5 +1,5 @@
-# Usa la imagen de OpenJDK 17
-FROM openjdk:17-jdk-slim
+# Usa la imagen de Eclipse Temurin (reemplazo oficial de OpenJDK)
+FROM eclipse-temurin:17-jdk-alpine
 
 # Directorio de trabajo
 WORKDIR /app

@@ -1,6 +1,6 @@
 app:
   version: ${APP_VERSION:local}
-  name: springlab-cesar-arico
+  name: springlab-Alan-herrera
 
 server:
   port: ${PORT:8080}
@@ -31,7 +31,3 @@ spring:
   devtools:
     restart:
       enabled: true
-
-#Configurar el servidor embebido (Tomcat)
-server:
-  port: 8080
