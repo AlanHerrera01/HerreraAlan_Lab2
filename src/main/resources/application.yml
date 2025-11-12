@@ -2,6 +2,9 @@ app:
   version: ${APP_VERSION:local}
   name: springlab-cesar-arico
 
+server:
+  port: ${PORT:8080}
+
 spring:
   #Configuracion del datasource
   datasource:

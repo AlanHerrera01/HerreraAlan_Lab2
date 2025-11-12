@@ -18,8 +18,9 @@ COPY src ./src
 # Construye la aplicación
 RUN ./gradlew clean build -x test
 
-# Puerto de la aplicación
+# Puerto de la aplicación (Render asigna dinámicamente)
 EXPOSE 8080
 
 # Comando para ejecutar la aplicación
-ENTRYPOINT ["java", "-jar", "build/libs/spring-lab-0.0.1-SNAPSHOT.jar", "--server.port=$PORT"]
+# Render proporciona PORT como variable de entorno
+CMD ["sh", "-c", "java -jar build/libs/spring-lab-0.0.1-SNAPSHOT.jar --server.port=${PORT:-8080}"]
